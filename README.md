@@ -10,6 +10,9 @@ Pytorch is the main tool for building AI projects BECOUSE:
  - It has its own NEURAL NETWORK MODULE, `torch.nn` provides a simple way to build neural networks
  - It has GREAT DOCUMENTATION, lots of tutorials and even PRE-TRAINED models
 
+Even though I had python installed for other projects, it is a good practice to Create a anaconda environment and install python within it, with all ne dependencies, anaconda takes care automatically of version mismatches and generally make life easier for the developer
+
+
  Here are the booksmarks for this learning step:
  https://www.youtube.com/watch?v=ORMx45xqWkA
 
