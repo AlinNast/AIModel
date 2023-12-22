@@ -2,7 +2,7 @@
 This is my repo where I experiment with building AI models and keep track of the evolution
 
 # Devlog Entries:
-## 1
+## 1 Pytorch
 Pytorch is the main tool for building AI projects BECOUSE:
  -  It provides the ability to use TENSORS ( multidimensional arrays ) just like numpy but with the superpower that they can run on the GPUs computaional power also (Pretty nice considering the new RTXs on the market) 
  - It uses Dynamic Computational Graphs, this means the graph is built on Runtime, this makes it more intuitive and allows easier debugging
@@ -19,3 +19,5 @@ Even though I had python installed for other projects, it is a good practice to 
  https://www.youtube.com/watch?v=IC0_FRiX-sw&list=PL_lsbAsL_o2CTlGHgMxNrKhzP97BaG9ZN&index=1
 
  https://www.youtube.com/watch?v=GvYYFloV0aA&list=PL8dPuuaLjXtO65LeD2p4_Sb5XQ51par_b
+
+ ## 2 Tensors
