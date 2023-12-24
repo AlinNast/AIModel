@@ -22,7 +22,7 @@ Even though I had python installed for other projects, it is a good practice to 
 
  ## 2 Tensors
 
-As discovered before Tensors are mutidimensional arrays, Becouse of this, they can represent different things (to be learned). In example, you need a black and white picture? 2 dimensianal matix for the pixels. Need a color picture? a 3d matix, add a dimension for the color. 
+As discovered before Tensors are mutidimensional arrays, Becouse of this, they can represent different things (to be learned). In example, you need a black and white picture? 2 dimensianal matix for the pixels. Need a color picture? a 3d matix, add a dimension for the color. Have a bunch of them? another dimension for the batch, is it a movie? add another dimension for the frame and time. you get it, it may work with everything: speach, picture, music, animations. All thanks to videogames and graphic cards if you ask me.
 
 Certain mathematical operation are possible with tensors,they have to follow certain rules, here i can summarize:
 
