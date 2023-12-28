@@ -64,3 +64,43 @@ https://www.youtube.com/watch?v=r7QDUPb2dCM&list=PL_lsbAsL_o2CTlGHgMxNrKhzP97BaG
 https://www.youtube.com/watch?v=v43SlgBcZ5Y
 
 https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
+
+
+## 3 Autograd
+
+What is Autograd? 
+Autograd is an automatic differentiation system within PyTorch. It's used to automatically compute gradients—that is, the derivatives of tensors with respect to some other tensors. This is crucial for optimization in neural networks, especially during the backpropagation phase.
+
+How is it used?
+In PyTorch, you use autograd by working with torch.Tensor objects. When you create a tensor, you can set requires_grad=True to track all operations on it. After your computations, you can call .backward() on the final tensor to compute all the gradients automatically.
+See autograd_test.py for examples
+
+Why is it used?
+Autograd simplifies the process of training neural networks. In a neural network, you need to update the weights based on the gradient of the loss function with respect to the weights. Autograd automates the computation of these gradients. Without autograd, you'd have to manually compute the derivative expressions for each model, which is complex and error-prone.
+
+The loss function is a way to measure how far is the model prediction from the desired output
+The weights are the parameters that determine how much influence one neuron has over another. On the bigger picture, they determine how much impact has the input over the output.
+
+In the autograd_test.py we can see that x.grad and y.grad are not values of x and y, but they are instead the rates at which z changes with respect to changes in x and y. The z.backward() calculates those grads and storesthem in the tensor object 
+
+The math behind obtaining these grads looks like this:
+
+     x.grad contains the gradient of z with respect to x. In my example, z = x * x * y. To find the gradient of z with respect to x, we differentiate z with respect to x:
+
+     ∂z/∂x=∂/∂x(x^2∗y)
+
+     Applying the chain rule, we get:
+
+     ∂z/∂x=2xy
+
+     Substituting x = 2 and y = 3:
+
+     ∂z/∂x= 2 * 2 * 3=12
+
+     So, x.grad is tensor([12.]), which is the gradient of z with respect to x.
+
+How to use the grad to update the weight:
+The grad tells you the direction and magnitude of the steepest increase in a function.
+The goal is to minimise the foss function, so the wights are ajusted in the oposite direction
+The parameter learning rate is used to control how much you ajust, its usually a small number like 0.01
+The basic formula for updating the wight is `new_wight = old_weight - (learning_rate * grad)`
