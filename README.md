@@ -104,3 +104,65 @@ The grad tells you the direction and magnitude of the steepest increase in a fun
 The goal is to minimise the foss function, so the wights are ajusted in the oposite direction
 The parameter learning rate is used to control how much you ajust, its usually a small number like 0.01
 The basic formula for updating the wight is `new_wight = old_weight - (learning_rate * grad)`
+
+
+## 4 Neural Networks:
+In py torch one simple one is the linear nn, wich gets the input into a nr of neurons, that will be passed through the next layer untill it reaches the output, ReLu is typically applied between the layers, exapt the last one
+
+Why ReLU?
+
+Non-linearity: It introduces non-linear properties to the network, allowing it to learn more complex patterns.
+Computationally Efficient: Compared to other functions like sigmoid or tanh, it's faster to compute.
+Mitigates Vanishing Gradient Problem: Unlike sigmoid or tanh, its derivative is not squashed into a very small range, which helps during backpropagation.
+
+Usefull functions in torch.nn.functional:
+(Variants to ReLU actually)
+
+Activation Functions:
+
+F.relu: ReLU function.
+F.sigmoid: Sigmoid function, used for binary classification.
+F.tanh: Tanh function, similar to sigmoid but ranges from -1 to 1.
+F.leaky_relu: A variant of ReLU that allows a small gradient when the unit is inactive.
+
+Loss Functions:
+
+F.mse_loss: Mean Squared Error, used for regression tasks.
+F.cross_entropy: Cross-entropy loss, used for classification tasks.
+
+Pooling Functions:
+
+F.max_pool2d: Max pooling for convolutional neural networks.
+F.avg_pool2d: Average pooling.
+
+Normalization:
+
+F.batch_norm: Batch normalization, used to stabilize and speed up training.
+F.dropout: Dropout, a regularization technique to prevent overfitting.
+
+Variants of Neural Networks
+
+Convolutional Neural Networks (CNNs):
+Purpose: Primarily used for image processing and computer vision tasks.
+Key Layers: Convolutional layers (nn.Conv2d), Pooling layers (nn.MaxPool2d).
+How They Work: They apply filters to the input to detect patterns like edges, textures, and other features.
+
+Recurrent Neural Networks (RNNs) and LSTMs:
+Purpose: Suited for sequential data like text, time series.
+Key Layers: Recurrent layers (nn.RNN), Long Short-Term Memory layers (nn.LSTM).
+How They Work: They process data sequentially, maintaining an internal state to remember past inputs.
+
+Residual Networks (ResNets):
+Purpose: Used to build very deep networks, common in advanced image processing tasks.
+Key Concept: Skip connections, which allow the output of one layer to "skip" some layers and be added to the output of a later layer.
+Benefit: Mitigates the vanishing gradient problem in deep networks.
+
+Transformer Networks:
+Purpose: Revolutionized natural language processing (NLP).
+Key Concept: Attention mechanisms, allowing the network to focus on different parts of the input sequence for prediction.
+Example: The architecture behind models like BERT, GPT.
+
+Autoencoders:
+Purpose: Used for unsupervised learning tasks like dimensionality reduction, feature learning.
+Architecture: Consists of an encoder that compresses the input and a decoder that reconstructs the input from the compressed representation.
+Each of these architectures serves different purposes and is suitable for various kinds of tasks. The choice depends on the nature of your data and the specific problem you're trying to solve.
