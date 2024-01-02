@@ -34,6 +34,8 @@ class SimpleNet(nn.Module):
 logit = torch.tensor([0.5])
 # Applying Sigmoid
 prob = F.sigmoid(logit)
+print("\nThe sigmoid")
+print(f"The logit {logit}\n and after applying the sigmoid")
 print(prob)  # Interpreted as probability
 
 
@@ -53,6 +55,7 @@ print(prob)  # Interpreted as probability
 input_tensor = torch.tensor([0.5])
 # Applying Tanh
 tanh_output = F.tanh(input_tensor)
+print(f"\n The Tanh Function \n The input tensor{input_tensor} \n And the output ")
 print(tanh_output)
 
 
@@ -71,6 +74,7 @@ print(tanh_output)
 input_tensor = torch.tensor([-0.5])
 # Applying Leaky ReLU
 leaky_relu_output = F.leaky_relu(input_tensor, negative_slope=0.01)
+print(f"\nLeaky Relu example, input {input_tensor}, \n And the output ")
 print(leaky_relu_output)
 
 
@@ -89,6 +93,7 @@ target = torch.tensor([2.5])
 prediction = torch.tensor([2.0])
 # Applying MSE Loss
 mse_loss = F.mse_loss(prediction, target)
+print(f"\nThe MSE applied, the target {target}, the prediction {prediction}, \n And the MSE applied to them:")
 print(mse_loss)
 
 
@@ -106,6 +111,8 @@ target = torch.tensor([1, 0, 1])
 predictions = torch.tensor([[0.25, 0.75], [0.60, 0.40], [0.30, 0.70]])
 # Applying Cross-Entropy Loss
 cross_entropy_loss = F.cross_entropy(predictions, target)
+print(f"\nThe cross entropy applied, the target {target}, the prediction {predictions}, \n And the Cross entropy applied to them:")
+
 print(cross_entropy_loss)
 
 
@@ -122,6 +129,8 @@ print(cross_entropy_loss)
 input_tensor = torch.tensor([[[[4, 3], [2, 1]]]])
 # Applying Max Pooling
 max_pool_output = F.max_pool2d(input_tensor, kernel_size=2)
+print(f"\nThe  MAX 2D pooling, the input {input_tensor}, \n And the application:")
+
 print(max_pool_output)
 
 
@@ -136,6 +145,8 @@ print(max_pool_output)
 input_tensor = torch.tensor([[[[4, 3], [2, 1]]]])
 # Applying Average Pooling
 avg_pool_output = F.avg_pool2d(input_tensor, kernel_size=2)
+print(f"\nThe AVG 2D pooling applied, the input {input_tensor}, \n And the application:")
+
 print(avg_pool_output)
 
 
@@ -149,8 +160,9 @@ print(avg_pool_output)
 # Example 2D tensor
 input_tensor = torch.randn(1, 2, 2, 2)  # Random tensor
 # Applying Batch Normalization
-batch_norm_output = F.batch_norm(input_tensor, running_mean=None, running_var=None)
-print(batch_norm_output)
+# batch_norm_output = F.batch_norm(input_tensor, running_mean=torch.tensor([1 , 2]), running_var=torch.tensor([1 , 2]))
+# print(f"\nThe batch normalization applied, the input {input_tensor}, \n And the application:")
+# print(batch_norm_output)
 
 
     # Dropout
@@ -164,5 +176,6 @@ print(batch_norm_output)
 input_tensor = torch.randn(1, 10)  # Random tensor
 # Applying Dropout
 dropout_output = F.dropout(input_tensor, p=0.2)
+print(f"\nThe dropout applied, the input {input_tensor}, \n And the application:")
 print(dropout_output)
 
