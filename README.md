@@ -166,3 +166,8 @@ Autoencoders:
 Purpose: Used for unsupervised learning tasks like dimensionality reduction, feature learning.
 Architecture: Consists of an encoder that compresses the input and a decoder that reconstructs the input from the compressed representation.
 Each of these architectures serves different purposes and is suitable for various kinds of tasks. The choice depends on the nature of your data and the specific problem you're trying to solve.
+
+The Documentation:
+https://www.youtube.com/watch?v=w9U57o6wto0&t=1s
+https://www.youtube.com/watch?v=NaptjtDyvuY
+https://www.youtube.com/watch?v=IHZwWFHWa-w&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=3
