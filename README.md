@@ -171,3 +171,13 @@ The Documentation:
 https://www.youtube.com/watch?v=w9U57o6wto0&t=1s
 https://www.youtube.com/watch?v=NaptjtDyvuY
 https://www.youtube.com/watch?v=IHZwWFHWa-w&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=3
+
+
+# 5 Micrograd
+
+This is the first Machine learning project implemented from scratch, 
+
+So far, The Value object is here to represent what a tensor in pytorch is, but its data is not a tensor but a single value, it stores a grad and knows the operation and the other values it came from, 
+
+By calculating the local and general derivative, the gradient is set to the Value object
+
