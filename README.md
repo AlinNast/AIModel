@@ -181,3 +181,25 @@ So far, The Value object is here to represent what a tensor in pytorch is, but i
 
 By calculating the local and general derivative, the gradient is set to the Value object
 
+Next step was to build the neural network, first i define a Neuron
+
+Neuron has a array o weights (Value object), array size is = to Number of inputs
+array size is eqal to the number of inputs, also stores a bias, upon calling a neruon it returns: 
+the sum of w*x+b.someActivationFunction() where:
+w is the weight represented by one Value object
+x is the input value, a array that must have the size of the number of inputs of a neuron 
+b is the bias
+it iterates through the array of weight and the array x at the same time
+
+
+Next I define a Layer:
+
+Layer is a Array of neurons of the size = to the desired nr of outputs
+Neurons are instantieted with the size of the recieved inputs
+upon call it returns a array of all the computed values of the neurons in it
+
+Next i define the MLP
+
+Multy Level Perceptron, it build a first layer of input neurons = to the dimensions of x, the second argument is the array coresponding to the sizes of layers, which build  neurons with the size = to previous layer
+
+Upon call it calls every layer to compute the output, which is then used as input for the next layer untill the last

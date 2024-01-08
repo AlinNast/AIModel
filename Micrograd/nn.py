@@ -1,0 +1,57 @@
+import random
+from typing import Any
+from Micrograd.engine import Value
+
+
+
+class Neuron():
+    """ This represents a neuron, it stores a array of Values (w), a bias and produces  (w*x+b).tanh"""
+    
+    def __init__(self, nin, nonlin=True):
+        # nin ~ Number of INputs
+        
+        self.w = [Value(random.uniform(-1,1)) for i in range(nin)] 
+        # stores the number of weights in a array from the inputs it gets
+        
+        self.b = Value(0) # Bias - Sets The trigger happines of the neuron
+        
+    def __call__(self, x):
+        """ calculates (and returns) w * x + b for every weight. size of x.lenght should match nin"""
+        act = sum((wi*xi for wi,xi in zip(self.w, x)), self.b)
+        
+        out = act.tanh()
+        
+        return out
+    
+class Layer():
+    """ This is a layer of neurons, it stores a array, upon call it performs the neurons math"""
+
+    def __init__(self, nin, nout):
+        # Initialisez a layer of neurons(with the nin) of size equal to the number of outputs
+        self.neurons = [Neuron(nin) for _ in range(nout)]
+
+    def __call__(self, x):
+        """it returns the value of x computed by the array of neurons in a array"""
+        outs = [n(x) for n in self.neurons]
+        return outs[0] if len(outs) == 1 else outs
+    
+class MLP():
+    """ This is a array of layers (MultyLevelPerceptron)"""
+    
+    def __init__(self, nin, nouts):
+        # this instantietes the layers of neruons
+        sz = [nin] + nouts # = [nin, nout[0]...]
+        # Creates a nr of layers = to nouts
+        # Listifies the nr of layers we want in the mlp
+        self.layers = [Layer(sz[i], sz[i+1], nonlin=i!=len(nouts)-1) for i in range(len(nouts))]
+
+    def __call__(self, x):
+        # calls the layer with the value x sequencially
+        for layer in self.layers:
+            x = layer(x)
+        return x
+    
+# n = MLP(3, [4, 4, 1])
+# this is a peceptron with a 3 dimension neuron input that gows to a 
+# layer of 4 neuron, another layer of 4 neurons, and then a layer of 1 neuron 
+# which is the output

@@ -3,6 +3,7 @@ import math
 
 class Value:
     """ stores a single scalar value and its gradient """
+    # Scalar its a one dimension/value array/tensor
     
     def __init__(self, data, _children=(), _op=''):
         
