@@ -203,3 +203,22 @@ Next i define the MLP
 Multy Level Perceptron, it build a first layer of input neurons = to the dimensions of x, the second argument is the array coresponding to the sizes of layers, which build  neurons with the size = to previous layer
 
 Upon call it calls every layer to compute the output, which is then used as input for the next layer untill the last
+
+Now the Program can be tested, with a sample array, and a expected output.
+ - Instantieted the mlp 
+ called it with the sample data
+ - got a predicted datea
+ - Calculated the MSE loss function with it and got a result
+  - called loss.backward and got gradients for every weight
+
+Now that I tested this on my neural network, next step is to access (and ajust the weights) for this i created the params function on the elements, they return the array of weights
+
+with this figured out, i can now do whats called a gradient descend:
+ Again:
+ - call mlp with sample data
+ - calculate loss with predicted and expected data
+ - Reset the gradients to zero  aka zero_grad()
+ -  calculate loss.backward for the gradients
+  - iterate through every n.params like so: p.data += -0.01*p.grad
+  - now all the weights have been modified to decrese the loss fonction
+Iterate through this process enought times and ideally the loss function will become close to 0

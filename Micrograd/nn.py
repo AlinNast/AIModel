@@ -23,6 +23,10 @@ class Neuron():
         
         return out
     
+    def parameters(self):
+        """This function of a neuron returns its array of weight and its bias at the end"""
+        return self.w + [self.b]
+    
 class Layer():
     """ This is a layer of neurons, it stores a array, upon call it performs the neurons math"""
 
@@ -34,6 +38,14 @@ class Layer():
         """it returns the value of x computed by the array of neurons in a array"""
         outs = [n(x) for n in self.neurons]
         return outs[0] if len(outs) == 1 else outs
+    
+    def parameters(self):
+        """This function of a Layer returns a list of the containing neurons weights"""
+        params = []
+        for neuron in self.neurons:
+            ps = neuron.parameters()
+            params.extend(ps)
+        return params
     
 class MLP():
     """ This is a array of layers (MultyLevelPerceptron)"""
@@ -51,7 +63,34 @@ class MLP():
             x = layer(x)
         return x
     
+    def parameters(self):
+        """This returns a array of the layers containing the neurons containing the weights"""
+        params = []
+        for layer in self.layers:
+            ps = layer.parameters()
+            params.extend(ps)
+        return params
+    
 # n = MLP(3, [4, 4, 1])
 # this is a peceptron with a 3 dimension neuron input that gows to a 
 # layer of 4 neuron, another layer of 4 neurons, and then a layer of 1 neuron 
 # which is the output
+
+# Lets try to run the program, initialize MLP, and play with test data, desired data and predicted data
+#
+# call in the mlp on the training test data, get the predicted data,compare it to the desider data
+# 
+# create the loss function, in this case mean square error, get the loss value
+# Call the loss.backward() and get every gradient of every value in the neurons in the layers 
+#
+
+# notes for the test: 
+# instantiete n
+# create array to match input size (training data)
+# create desired output
+# iterate: call array with training data, get predicted data, calculate loss function (MSE),
+# zero grads, calculate loss backward,  interate through every params and ajust data with (new) gradient,
+# redo iteration
+# 
+# This has 41 parameters and a small array as a training data, but conceptually its AI just as much as a chat gpt
+#that hasi billion(s) of parameters and training data as big as the internet
