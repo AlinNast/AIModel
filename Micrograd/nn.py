@@ -1,6 +1,6 @@
 import random
 from typing import Any
-from Micrograd.engine import Value
+from engine import Value
 
 
 
@@ -19,13 +19,16 @@ class Neuron():
         """ calculates (and returns) w * x + b for every weight. size of x.lenght should match nin"""
         act = sum((wi*xi for wi,xi in zip(self.w, x)), self.b)
         
-        out = act.tanh()
+        out = act.relu()
         
         return out
     
     def parameters(self):
         """This function of a neuron returns its array of weight and its bias at the end"""
         return self.w + [self.b]
+    
+    def __repr__(self):
+        return f"Linear Neuron({len(self.w)})"
     
 class Layer():
     """ This is a layer of neurons, it stores a array, upon call it performs the neurons math"""
@@ -47,6 +50,9 @@ class Layer():
             params.extend(ps)
         return params
     
+    def __repr__(self):
+        return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
+    
 class MLP():
     """ This is a array of layers (MultyLevelPerceptron)"""
     
@@ -55,7 +61,7 @@ class MLP():
         sz = [nin] + nouts # = [nin, nout[0]...]
         # Creates a nr of layers = to nouts
         # Listifies the nr of layers we want in the mlp
-        self.layers = [Layer(sz[i], sz[i+1], nonlin=i!=len(nouts)-1) for i in range(len(nouts))]
+        self.layers = [Layer(sz[i], sz[i+1]) for i in range(len(nouts))]
 
     def __call__(self, x):
         # calls the layer with the value x sequencially
@@ -70,6 +76,9 @@ class MLP():
             ps = layer.parameters()
             params.extend(ps)
         return params
+    
+    def __repr__(self):
+        return f"MLP of [{', '.join(str(layer) for layer in self.layers)}]"
     
 # n = MLP(3, [4, 4, 1])
 # this is a peceptron with a 3 dimension neuron input that gows to a 
