@@ -39,6 +39,8 @@ class Value:
         field containing the multiplication of the operands"""
         
         other = other if isinstance(other, Value) else Value(other)
+        if other.data == None:
+            other.data = 0.0
         out = Value(self.data * other.data, (self, other), '*')
         ### on this operation, the construction of the new Value object is made
         ### while also passing in the tuple of the initial Value objects
@@ -68,14 +70,25 @@ class Value:
         
         return out
     
-    def __tanh__(self):
+    def tanh(self):
         x = self.data
-        t += (math.exp(2*x) - 1)/(math.exp(2*x) + 1)
+        t = (math.exp(2*x) - 1)/(math.exp(2*x) + 1)
         out = Value(t, (self,), "tanh")
         
         def _backward():
             self.grad = (1 - t**2) * out.grad
         out._backward = _backward
+        
+        return out
+        
+    def relu(self):
+        out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
+
+        def _backward():
+            self.grad += (out.data > 0) * out.grad
+        out._backward = _backward
+
+        return out
         
     def __radd__(self, other):
         return self + other

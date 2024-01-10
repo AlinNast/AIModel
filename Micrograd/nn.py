@@ -13,13 +13,13 @@ class Neuron():
         self.w = [Value(random.uniform(-1,1)) for i in range(nin)] 
         # stores the number of weights in a array from the inputs it gets
         
-        self.b = Value(0) # Bias - Sets The trigger happines of the neuron
+        self.b = Value(0.1) # Bias - Sets The trigger happines of the neuron
         
     def __call__(self, x):
         """ calculates (and returns) w * x + b for every weight. size of x.lenght should match nin"""
         act = sum((wi*xi for wi,xi in zip(self.w, x)), self.b)
         
-        out = act.relu()
+        out = act.tanh()
         
         return out
     
@@ -39,8 +39,12 @@ class Layer():
 
     def __call__(self, x):
         """it returns the value of x computed by the array of neurons in a array"""
-        outs = [n(x) for n in self.neurons]
-        return outs[0] if len(outs) == 1 else outs
+        #outs = [n(x) for n in self.neurons]
+        out = []
+        for n in self.neurons:
+            comp = n(x)
+            out.append(comp)
+        return out[0] if len(out) == 1 else out # it is here where the array becomes none
     
     def parameters(self):
         """This function of a Layer returns a list of the containing neurons weights"""

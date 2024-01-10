@@ -15,6 +15,7 @@ def main():
     print (model)
     
     print("\n Now to call with test data\n")
+    print(x)
     ypred = model(x)
     print(ypred)
 
