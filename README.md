@@ -177,11 +177,12 @@ https://www.youtube.com/watch?v=IHZwWFHWa-w&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-
 
 This is the first Machine learning project implemented from scratch, 
 
-So far, The Value object is here to represent what a tensor in pytorch is, but its data is not a tensor but a single value, it stores a grad and knows the operation and the other values it came from, 
+So far, The Value object is here to represent what a tensor in pytorch is, but its data is not a tensor but a single value, or a scalar. It stores a grad and knows the operation and the other values it came from. 
 
 By calculating the local and general derivative, the gradient is set to the Value object
 
-Next step was to build the neural network, first i define a Neuron
+
+Next step was to build the neural network, first I defined a Neuron.
 
 Neuron has a array o weights (Value object), array size is = to Number of inputs
 array size is eqal to the number of inputs, also stores a bias, upon calling a neruon it returns: 
@@ -190,30 +191,33 @@ w is the weight represented by one Value object
 x is the input value, a array that must have the size of the number of inputs of a neuron 
 b is the bias
 it iterates through the array of weight and the array x at the same time
+So, it knows how many Inputs (weights) it will have and output one computed Value
 
 
 Next I define a Layer:
 
 Layer is a Array of neurons of the size = to the desired nr of outputs
-Neurons are instantieted with the size of the recieved inputs
+Neurons are instantieted with the size of the recieved inputs (previous layer size)
 upon call it returns a array of all the computed values of the neurons in it
 
-Next i define the MLP
 
-Multy Level Perceptron, it build a first layer of input neurons = to the dimensions of x, the second argument is the array coresponding to the sizes of layers, which build  neurons with the size = to previous layer
+Next I define the MLP:
 
-Upon call it calls every layer to compute the output, which is then used as input for the next layer untill the last
+Multy Level Perceptron, it builds a first layer of input neurons = to the dimensions of x (input size), the second argument is the array coresponding to the sizes of layers, which build  neurons with the size = to previous layer
+Upon call it calls every layer to compute the input, then give it to the next layer, all the way to the last layer which will output the predicted value 
+
 
 Now the Program can be tested, with a sample array, and a expected output.
  - Instantieted the mlp 
- called it with the sample data
+ - called it with the sample data
  - got a predicted datea
  - Calculated the MSE loss function with it and got a result
   - called loss.backward and got gradients for every weight
 
+
 Now that I tested this on my neural network, next step is to access (and ajust the weights) for this i created the params function on the elements, they return the array of weights
 
-with this figured out, i can now do whats called a gradient descend:
+with this figured out, I can now do whats called a gradient descend:
  Again:
  - call mlp with sample data
  - calculate loss with predicted and expected data

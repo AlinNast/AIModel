@@ -39,8 +39,8 @@ class Value:
         field containing the multiplication of the operands"""
         
         other = other if isinstance(other, Value) else Value(other)
-        if other.data == None:
-            other.data = 0.0
+        # if other.data == None:
+        #     other.data = 0.0
         out = Value(self.data * other.data, (self, other), '*')
         ### on this operation, the construction of the new Value object is made
         ### while also passing in the tuple of the initial Value objects
@@ -62,7 +62,7 @@ class Value:
         """
         
         assert isinstance(other, (int, float))
-        out = Value(self ** other, (self,), 'pow')
+        out = Value(self.data ** other, (self,), 'pow')
         
         def _backward():
             self.grad += other * (self.data**(other-1)) * out.grad
@@ -123,7 +123,7 @@ class Value:
         def build_topo(v):
             if v not in visited:
                 visited.add(v)
-                for child in v._prev:
+                for child in v.prev:
                     build_topo(child)
                 topo.append(v)
         build_topo(self)
