@@ -226,3 +226,12 @@ with this figured out, I can now do whats called a gradient descend:
   - iterate through every n.params like so: p.data += -0.01*p.grad
   - now all the weights have been modified to decrese the loss fonction
 Iterate through this process enought times and ideally the loss function will become close to 0
+
+
+## Bigram model
+
+The next logical step is to transform what i learned with numbers in a text based program, a simple one is to build a name generator with a birgram model
+
+A bigram model knows one leter and outputs the next one
+
+In order to do so, first I need to transform text into numbers, make the machine work with numbers and then transform them back to text
