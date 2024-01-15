@@ -235,3 +235,19 @@ The next logical step is to transform what i learned with numbers in a text base
 A bigram model knows one leter and outputs the next one
 
 In order to do so, first I need to transform text into numbers, make the machine work with numbers and then transform them back to text
+
+I created a Dictionary with the characters and a index (alphabetically ordered)
+Using the dictioary, and a iteration through every character of the string of data, the tensor (N) now maps how many times a characters is followed by another for every character in the array
+
+Since now we have the count of every letter following another the name generator is build:
+
+First step:
+starting on the first row (first letters following dot), normalizing the values and transforming them in probabilies
+get one letter acording to its probability
+
+Second Step:
+with the new generated letter, its row is now selected and the normalizing and prob transform is now applied
+the next letter is generated acording to the probability
+
+Last step:
+If the genereted char is the end char '.' the loop stops and returns a value
