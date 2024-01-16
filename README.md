@@ -251,3 +251,6 @@ the next letter is generated acording to the probability
 
 Last step:
 If the genereted char is the end char '.' the loop stops and returns a value
+
+Evaluating the word. 
+In order to goto train a model I firnst need to figure out a way to evaualte its untrained predictions. The solution for this is a negative Logaritmic likelihood, the formula can be seenm in the code. It sum up the normalized values of the probabilities (normalized by log function). and it negative in order to return a positive float
