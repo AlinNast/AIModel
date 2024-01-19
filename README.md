@@ -254,3 +254,5 @@ If the genereted char is the end char '.' the loop stops and returns a value
 
 Evaluating the word. 
 In order to goto train a model I firnst need to figure out a way to evaualte its untrained predictions. The solution for this is a negative Logaritmic likelihood, the formula can be seenm in the code. It sum up the normalized values of the probabilities (normalized by log function). and it negative in order to return a positive float
+
+With the loss function defined now it time to apply gradient descent, with the neuron layer having a normalized random value matrix, the produc between the encoded data and W neuron layer, the values normalized and transformed into probabilities, on the new obtained probabilities tensor the loss function gets applied and with it the weights of the W Layer. after sufficient training the program can now generate names just as the probabilistic algoritm.

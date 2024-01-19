@@ -16,7 +16,7 @@ itos = {i:s for s,i in stoi.items()}
 # stoi is a dictionary that stores every character + the 2 special ones with a coresponding index in alphabetical order
 
 def mapN():
-    maxMap = (len(names)//8)
+    maxMap = (len(names))
     for name in names[:maxMap]:
         characters = ['.'] + list(name) + ['.'] # S marks the start of a name and E marks the end
         for ch1 ,ch2 in zip(characters, characters[1:]):
@@ -84,6 +84,8 @@ def generateAIname(W):
 def create_train_dataset():
     ### Similar to mapping N, in order to prepare the data for a neural net we need a array of integers to ilustrate what characters follow another, 
     # rather than one array to count how many times it gets followed 
+    
+    print(f"Dataset contains {len(names)} names for training a bigram model")
     xs = []
     ys = []
     for name in names:
@@ -108,13 +110,14 @@ def encoder():
 def main():
     print("Program Initialized")
     
-    print("\nStart dataset mapping")
-    tic= time.perf_counter()
-    mapN()
-    tac = time.perf_counter()
-    print(f"Dataset mapped in {tac - tic} seconds")
+    # print("\nStart dataset mapping")
+    # tic= time.perf_counter()
+    # mapN()
+    # tac = time.perf_counter()
+    # print(f"Dataset mapped in {tac - tic} seconds")
+    # print("\n Name generation based on probability")
     
-    print("\nNext step is to ENCODE the data")
+    print("\nENCODE the data")
     
     tic= time.perf_counter()
     xenc, ys = encoder()
@@ -124,9 +127,16 @@ def main():
     print("\n Creating Neuron Layer ")
     # This is THE Neuron
     W = torch.randn((27,27), requires_grad=True)    # This creates a tensor with random values froma normalized function
-    print("\n Initiallizing gradient descent")
+    
+    print("\n Ganerating test names before model training")
+    for i in range(5):
+        name = generateAIname(W=W)
+        print(''.join(name))
+        
+        
+    print("\n \n Initiallizing gradient descent")
     tic= time.perf_counter()
-    for k in range(200):
+    for k in range(321):
         
         ### basicly the forward pass
         logits =  xenc @ W  # this provides a tensor that represent the log counts of the characters on the training data
@@ -137,7 +147,9 @@ def main():
         # this is equivalent to P
        
         loss= -Probs[torch.arange(len(xenc)), ys].log().mean()
-        print(loss)
+        
+        if k % 80 == 0:
+            print(f"Epoch: {k}, loss: {loss.data}")
         
     
         ### basicly the backward pass
@@ -145,29 +157,15 @@ def main():
         loss.backward()
     
         ### Basicly the update
-        W.data += -4 * W.grad
+        W.data += -8 * W.grad
     
     tac = time.perf_counter()
     print(f"Neural network trained in {tac - tic} seconds")
     
-    
-    while True:
-        print("input pelase")
-        i = input()
-        
-        if i == '1':
-            name = generateName()
-            print(''.join(name))
-        elif i == '2':
-            name = generateAIname(W=W)
-            print(''.join(name))
-        elif i == 'e':
-            break
-        else:
-            continue
-    
-    
-    
+    print("\n Ganerating names after model training")
+    for i in range(5):
+        name = generateAIname(W=W)
+        print(''.join(name))
     
 
 if __name__ == "__main__":
