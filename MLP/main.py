@@ -58,7 +58,7 @@ b2 = torch.randn(27)
 def main():
     print("started")
     parameters = [C, W1 ,b1, W2, b2]
-    print(f"Program contains {sum(p.nelement() for p in parameters)}")
+    print(f"Program contains {sum(p.nelement() for p in parameters)} parameters")
     for p in parameters:
         p.requires_grad = True
     
@@ -77,7 +77,7 @@ def main():
         #print("Activating the first Layer")
         # The activation of the first hidden layer
         h = torch.tanh(emb.view(-1,30) @ W1 + b1)  # size 32, 100
-        # emp.view is a function of pytorch that changes the shape of emp to allow matrix multiplication without using concatination, thus bein more efficient
+        # emp.view is a function of pytorch that changes the shape of emp to allow matrix multiplication without using concatination, thus being more efficient
         
         #print("Calculating the probability distribution  of the Output layer")
         # Building the output gathering logic

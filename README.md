@@ -258,3 +258,49 @@ In order to recreate something like the tensor N that also implements the machin
      Process is repreated a few epochs, printing the loss shows it gets closer to the loss of the probabilities tensor N
 Generating a Name before and after the gradient descent, and also with the probabilities tensor N shows that the model is learning to predict the next letter based on the training data
 
+
+### 7 MLP
+
+On this experiment I combined the encoding from the previous model, turning the list of names into integers but instead of feeding them into a single layer to obtain the predictions I created a MLP first encoding layer, the next hidden layer, a final layer and loss function calculated by a cross entropy.
+
+# Steps of implementations:
+1. First i built the vocabulary, just as the previous project
+2. Then i built the dataset:
+     - For this project I implemented the segregation of the data into train/dev/test this is similar to what a real production project looks like
+3. I Built the embeding layer:
+     - Just as the previous project, this layer is built by generating a tensor with random normalized values
+     - For the size of the embeding layer I chose (27, 10), 27 stands for the size of the vocabulary, and 10 is a arbitrary value I chose and even changed to see how the model behaves
+4. I build the Hidden Layer:
+     - Again tensor with random normalized values
+     - The size of this layer is 30, 100
+     - the first size 30 is the last size of the previous layer '10' times the block size which is 3 in this model (blocksize means how many characters the model take into accounf for generating one)
+     - the second size 100 again is arbitrary and i ajusted it to see how the loss value changes
+5. The Final Layer:
+     -  Size 100 27
+     -  This one has the size of 100 as to match the output of the previous layer
+     -  27 to match the size of the vocabulary tensor
+6. Before building the forward function I split the dataset into minibatches:
+     -  Just as production project use minibatches, this was a thechnique to learn
+     - By generating a random index tensor with value between the 0 and max size of dataset
+     - Now the embeding data tensor size is smaller
+     - The trainig epochs are much faster and the training still occurs on all the training dataset
+7. The forward pass, after the training dataset is selected in minibathces:
+     - the embeded data ~ First Layer is activated by a tanh function into the next layer
+     - tanh( emb * hidden layer + bias)
+     - in order for the matmul to work the emb need to be concatenated, there are many ways to do it
+     - The Hidden Layer is activated by matmult with the last layer giving the output logits
+     - The loss functions is calculated between the output logits and the desired output with cross entropy
+8. The backward pass is more straightforward:
+     - Clearing the gradinets
+     - calculate the derivatives of the loss operation
+     - Adjust the weights and biases with the new gradinets
+     - For this model a dynamic learning rate was used in order to learn how production models are trained
+9. Evaluation:
+     - the loss function is calculater again with the dev data set in order to proove training works
+
+
+# New aditions:
+- Spliting the dataset into training, dev and test
+- Using a dynamic learning step
+- Using cross entropy as a loss calculation
+- Testing the loss function with a separate dataset
