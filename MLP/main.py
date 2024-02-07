@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import matplotlib
 import random
+import time
 
 
 names = open('.\GitHub\AIModel\BigramLm\\names.txt', 'r').read().splitlines()
@@ -39,33 +40,51 @@ Xdev, Ydev = build_dataset(names[lim1:lim2])
 Xtest, Xtest = build_dataset(names[lim2:])
 
 # Build the embeding
-C = torch.randn((27,10)) # the lookup table
+C = torch.randn((27,15)) # the lookup table
 
 
 # building the Hidden Layer and biases
-W1 = torch.randn((30, 300))
-b1 = torch.randn(300)
+W1 = torch.randn((45, 200))
+b1 = torch.randn(200)
     
 
 
 
 # Building the final Layer
-W2 = torch.randn((300, 27))
+W2 = torch.randn((200, 27))
 b2 = torch.randn(27)
     
+def generate_name():
+    block_zise = 3
+    out = []
+    context = [0] * block_zise
+    
+    while True:
+        emb = C[torch.tensor([context])]
+        h = torch.tanh(emb.view(1,-1) @ W1 + b1)
+        logits = h @ W2 + b2
+        probs = F.softmax(logits, dim=1)
+        ix = torch.multinomial(probs, num_samples=1).item()
+        context = context[1:] + [ix]
+        out.append(ix)
+        if ix == 0:
+            break
+    print("".join(itos[i] for i in out))
 
 
 def main():
-    print("started")
+    print("\n\nStarted")
     parameters = [C, W1 ,b1, W2, b2]
-    print(f"Program contains {sum(p.nelement() for p in parameters)} parameters")
+    print(f"\nProgram contains {sum(p.nelement() for p in parameters)} parameters")
     for p in parameters:
         p.requires_grad = True
     
                 # This experiment shows how to find a apropriate learning rate
                 # learning_rate_exponent = torch.linspace(-3,0,2000)
                 # learning_rate_value = 10**learning_rate_exponent
-    for i in range(20000):
+    tic= time.perf_counter()
+    print("\n Begin Gradient Descent")
+    for i in range(30000):
         ### Creating Minibatches
         ix = torch.randint(0, Xtr.shape[0], (32,)) # this creates a tensor with randoms between 0 and 32 (based on X) of size 32
         # this way allowind the ANN to train on random small bathces of the dataset
@@ -76,7 +95,7 @@ def main():
         
         #print("Activating the first Layer")
         # The activation of the first hidden layer
-        h = torch.tanh(emb.view(-1,30) @ W1 + b1)  # size 32, 100
+        h = torch.tanh(emb.view(-1,45) @ W1 + b1)  # size 32, 100
         # emp.view is a function of pytorch that changes the shape of emp to allow matrix multiplication without using concatination, thus being more efficient
         
         #print("Calculating the probability distribution  of the Output layer")
@@ -99,24 +118,36 @@ def main():
         loss.backward()
         ### End Backward pass
         ### Update
-        #lr = learning_rate_value[i]
+        if i < 10000:
+            lr = 0.12
+        elif 10000 <= i < 20000:
+            lr = 0.05
+        else:
+            lr = 0.02
+            
         for p in parameters:
-            p.data += -0.05 * p.grad
-            #p.data += -lr * p.grad
+            #p.data += -0.05 * p.grad
+            p.data += -lr * p.grad
         
         #print(lr)
         #print(loss.item())
-    print("Evaluation of loss on training data after training")    
+    tac = time.perf_counter()
+    print(f"Model trained 30000 epochs in {tac - tic} seconds")
+    print("\n Evaluation of loss on training data after training")    
     print(loss.item())
     
-    print("Evaluation on Development data after training")
+    print("\n Evaluation on Development data after training")
     emb = C[Xdev] 
-    h = torch.tanh(emb.view(-1,30) @ W1 + b1)
+    h = torch.tanh(emb.view(-1,45) @ W1 + b1)
     logits = h @ W2 + b2
     loss = F.cross_entropy(logits, Ydev)
     print(loss.item())
 
-    print("finished")
+    print("\n Generating names")
+    for i in range(20):
+        generate_name()
+        
+    print("\nFinished")
 
 
 if __name__ == "__main__":

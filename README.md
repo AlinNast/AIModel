@@ -261,7 +261,7 @@ Generating a Name before and after the gradient descent, and also with the proba
 
 ### 7 MLP
 
-On this experiment I combined the encoding from the previous model, turning the list of names into integers but instead of feeding them into a single layer to obtain the predictions I created a MLP first encoding layer, the next hidden layer, a final layer and loss function calculated by a cross entropy.
+On this experiment I combined the encoding from the previous model, turning the list of names into integers but instead of feeding them into a single layer to obtain the predictions I created a MLP, first encoding layer, the next hidden layer, a final layer and loss function calculated by a cross entropy.
 
 # Steps of implementations:
 1. First i built the vocabulary, just as the previous project
@@ -304,3 +304,4 @@ On this experiment I combined the encoding from the previous model, turning the 
 - Using a dynamic learning step
 - Using cross entropy as a loss calculation
 - Testing the loss function with a separate dataset
+- Using a block of 3 character to predict the next one rather than just one
