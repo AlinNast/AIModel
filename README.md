@@ -263,7 +263,7 @@ Generating a Name before and after the gradient descent, and also with the proba
 
 On this experiment I combined the encoding from the previous model, turning the list of names into integers but instead of feeding them into a single layer to obtain the predictions I created a MLP, first encoding layer, the next hidden layer, a final layer and loss function calculated by a cross entropy.
 
-# Steps of implementations:
+#### Steps of implementations:
 1. First i built the vocabulary, just as the previous project
 2. Then i built the dataset:
      - For this project I implemented the segregation of the data into train/dev/test this is similar to what a real production project looks like
@@ -299,9 +299,52 @@ On this experiment I combined the encoding from the previous model, turning the 
      - the loss function is calculater again with the dev data set in order to proove training works
 
 
-# New aditions:
+#### New aditions:
 - Spliting the dataset into training, dev and test
 - Using a dynamic learning step
 - Using cross entropy as a loss calculation
 - Testing the loss function with a separate dataset
 - Using a block of 3 character to predict the next one rather than just one
+
+
+### MLP v2
+
+Summary .
+
+#### Steps of implementation:
+
+1. I started by recreating the previous MLP but with leaving asside some hard coded values to allow for easier modification of the ANN, also making certain functions more easily accessible. This is the initial ANN:
+
+          MLP Initialized
+          Layers created in 0.000819200009573251 sec
+          This MLP contain 11897 parameters
+          Value of the loss funtion: 30.54128646850586 on training step:0
+          Value of the loss funtion: 2.9965057373046875 on training step:10000
+          Value of the loss funtion: 2.173659086227417 on training step:20000
+          Training of 20001 steps completed 22.84705560002476 sec
+          Evaluation loss: 2.3344485759735107
+
+2. The initial loss is obviously very high so a logical step is to reduce the initial loss in order to make the NeuralNet beter, I did this by reducing the initial biases of the output layer b2 to 0 and the weights of the output layer W2 with 0.01, this way reducing a lot of the default entropy caused by the randomized normal tensor generation, and the output is here:
+
+          MLP Initialized
+          Layers created in 0.0014186000335030258 sec
+          This MLP contain 11897 parameters
+          Value of the loss funtion: 3.294851779937744 on training step:0
+          Value of the loss funtion: 1.9210432767868042 on training step:10000
+          Value of the loss funtion: 2.1803672313690186 on training step:20000
+          Training of 20001 steps completed 22.89989629999036 sec
+          Evaluation loss: 2.1928908824920654
+          sari.
+
+3. Already some improvement, next step is to look at the hidden layer activation, The way Tanh works in the backprobagation can be ellusive, the derivative of tanh(x) = 1 - tanh**2(x) this means that if a neuron will have a value close to 1 or -1, in the loss.backward() phase its gradient will be calculated as nearly 0, which makes it hard to train, even inactive, and this is undesired. To fix this. the same technique will be applied to the hidden layer, W1 * 0.1 and b * 0.1. The goal is to reduce high values not to remove all the entropy, the results are here:
+
+          MLP Initialized
+          Layers created in 0.001290299987886101 sec
+          This MLP contain 11897 parameters
+          Value of the loss funtion: 3.29561710357666 on training step:0
+          Value of the loss funtion: 2.240442991256714 on training step:10000
+          Value of the loss funtion: 1.8903627395629883 on training step:20000
+          Training of 20001 steps completed 21.337516199972015 sec
+          Evaluation loss: 2.228701114654541
+          chackry.
+#### New aditions:
