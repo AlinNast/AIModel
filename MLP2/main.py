@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import matplotlib
 import random
+import sys
 import time
 
 
@@ -35,21 +36,27 @@ def build_dataset(names):
     return X , Y
 
 @torch.no_grad()
-def split_loss(C, W1, b1, W2, b2):
+def split_loss(C, W1, b1, W2, b2,batch_normalization_gain, batch_normalization_bias):
     emb = C[Xdev]
     embcat = emb.view(emb.shape[0], -1)
-    h = torch.tanh(embcat @ W1 + b1) # N to H1 activation
+    hpreact = embcat @ W1 + b1
+    hpreact = batch_normalization_gain * (hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True) + batch_normalization_bias
+
+    h = torch.tanh(hpreact) # N to H1 activation
     logits = h @ W2 + b2 # H1 to Out Activation
     loss = F.cross_entropy(logits, Ydev)
     print(f"Evaluation loss: {loss}")
     
-def generate_name(C, W1, b1, W2, b2):
+def generate_name(C, W1, b1, W2, b2,batch_normalization_gain, batch_normalization_bias):
     out = []
     context = [0] * block_size
     
     while True:
         emb = C[torch.tensor([context])]
-        h = torch.tanh(emb.view(1,-1) @ W1 + b1)
+        embcat = emb.view(emb.shape[0], -1)
+        hpreact = embcat @ W1 + b1
+        
+        h = torch.tanh(batch_normalization_gain * hpreact+ batch_normalization_bias) # N to H1 activation
         logits = h @ W2 + b2
         probs = F.softmax(logits, dim=1)
         ix = torch.multinomial(probs, num_samples=1).item()
@@ -82,14 +89,19 @@ def main():
 
     ### Layers of the MLP
     C = torch.randn(vocab_size, n_embed)   # embeding layer
-    W1= torch.randn(n_embed * block_size, n_hidden) * 0.1 # Hidden layer
-    b1= torch.randn(n_hidden) * 0.1  # Hidden layer Biases
+    W1= torch.randn(n_embed * block_size, n_hidden) * (5/3)/((n_embed*block_size)**0.5) # Hidden layer
+    b1= torch.randn(n_hidden) * 0.01  # Hidden layer Biases
     W2= torch.randn(n_hidden, vocab_size) * 0.01  # output layer
     b2= torch.randn(vocab_size) * 0  # output Layer Biases
+    ### Batch Normalization parameters
+    batch_normalization_gain = torch.ones((1, n_hidden)) # used in the initialization to normalize the preactivation in a gaussian distribution
+    batch_normalization_bias = torch.zeros((1, n_hidden)) # same
+    bn_mean_running = torch.zeros((1, n_hidden))
+    bn_std_running = torch.ones((1, n_hidden))
     
     print(f"Layers created in {time.perf_counter() - tic} sec")
     
-    parameters = [C, W1, b1, W2, b2]
+    parameters = [C, W1, b1, W2, b2, batch_normalization_gain, batch_normalization_bias]
     print(f"This MLP contain {sum(p.nelement() for p in parameters)} parameters")
     for p in parameters:
         p.requires_grad=True
@@ -105,7 +117,16 @@ def main():
         # Forward pass
         emb = C[Xbatch] # Embeded characters into vecotors
         embcat = emb.view(emb.shape[0], -1) # Concatenate Vectors
+        # Linear Layer
         h_preact = embcat @ W1 +b1 # Hidded layer pre activation
+        # Batch Normalization Layer
+        bn_mean_i = h_preact.mean(0, keepdim=True)
+        bn_std_i = h_preact.std(0, keepdim=True)
+        h_preact = batch_normalization_gain * (h_preact - bn_mean_i) / bn_std_i + batch_normalization_bias
+        with torch.no_grad():
+            bn_mean_running = 0.999 * bn_mean_running + 0.001 * bn_mean_i
+            bn_std_running = 0.999 * bn_std_running + 0.001 * bn_std_i
+        # NonLinearity
         h = torch.tanh(h_preact) # Hidden Layer
         logits = h @ W2 + b2
         loss = F.cross_entropy(logits, Ybatch)
@@ -116,7 +137,7 @@ def main():
         loss.backward()
         
         # Update
-        lr = 0.08 if i < training_steps/2 else 0.0006
+        lr = 0.06 if i < training_steps/2 else 0.0003
         for p in parameters:
             p.data += -lr * p.grad
         
@@ -127,10 +148,10 @@ def main():
     print(f"Training of {training_steps} steps completed {time.perf_counter() - tic} sec")   
     
     # Evaluate training
-    split_loss(C, W1, b1, W2, b2)
+    split_loss(C, W1, b1, W2, b2,batch_normalization_gain,batch_normalization_bias)
     
     # Generate name
-    generate_name(C, W1, b1, W2, b2)
+    generate_name(C, W1, b1, W2, b2,batch_normalization_gain,batch_normalization_bias)
     
             
 

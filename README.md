@@ -336,7 +336,7 @@ Summary .
           Evaluation loss: 2.1928908824920654
           sari.
 
-3. Already some improvement, next step is to look at the hidden layer activation, The way Tanh works in the backprobagation can be ellusive, the derivative of tanh(x) = 1 - tanh**2(x) this means that if a neuron will have a value close to 1 or -1, in the loss.backward() phase its gradient will be calculated as nearly 0, which makes it hard to train, even inactive, and this is undesired. To fix this. the same technique will be applied to the hidden layer, W1 * 0.1 and b * 0.1. The goal is to reduce high values not to remove all the entropy, the results are here:
+3. Already some improvement, next step is to look at the hidden layer activation, The way Tanh works in the backprobagation can be ellusive, the derivative of tanh(x) = 1 - tanh**2(x) this means that if a neuron will have a value close to 1 or -1, in the loss.backward() phase its gradient will be calculated as nearly 0, which makes it hard to train, even inactive, and this is undesired.more about the tanh function here: https://fr.wikipedia.org/wiki/Tangente_hyperbolique. To fix this. the same technique will be applied to the hidden layer, W1 * 0.1 and b * 0.1. The goal is to reduce high values not to remove all the entropy, the results are here:
 
           MLP Initialized
           Layers created in 0.001290299987886101 sec
@@ -347,4 +347,24 @@ Summary .
           Training of 20001 steps completed 21.337516199972015 sec
           Evaluation loss: 2.228701114654541
           chackry.
+
+4. After some more research I found out that a scientific paper published bi Kaiming, actually looked into the best ways to scale a neuron weights relative to the activation function: https://arxiv.org/abs/1502.01852 . According to the paper instead of multiplying W1 with some trial an error values, I used (5/3)/(n**0.5) where n is the layers first dimension
+
+          MLP Initialized
+          Layers created in 0.0011490000179037452 sec
+          This MLP contain 11897 parameters
+          Value of the loss funtion: 3.2947452068328857 on training step:0
+          Value of the loss funtion: 2.152228355407715 on training step:10000
+          Value of the loss funtion: 2.002431869506836 on training step:20000
+          Training of 20001 steps completed 23.656168000015896 sec
+          Evaluation loss: 2.2089436054229736
+          molanita.
+
+5. Batch Normalization, the next big breakthrough in machine learning, The scientific paper describing it is linked here: https://arxiv.org/abs/1502.03167, Its implementation here is mostly demonstrative due to the size of the MLP it wont impact the performance too much, but on big ANN they play a important role. By using a Normalization layer that also keeps track of the mean and stable distributionit maintains the values of the preactivatted layer to a Gaussian distribution, this also prevents over fitting data
+
+
+
+
 #### New aditions:
+ - Reduced initial loss due to descaling the output layer W and b
+ - Eficiently reduce loss and increase training efficiency by scaling the Hidden layer with a Kaiming ratio
