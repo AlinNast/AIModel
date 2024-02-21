@@ -309,7 +309,7 @@ On this experiment I combined the encoding from the previous model, turning the 
 
 ### MLP v2
 
-Summary .
+It is a Upgraded MLP, with a bigger number of parameters, with more training epochs, normalized parameters to avoid inactive neurons, and batch normalization to support deeper neural networks.
 
 #### Steps of implementation:
 
@@ -362,9 +362,28 @@ Summary .
 
 5. Batch Normalization, the next big breakthrough in machine learning, The scientific paper describing it is linked here: https://arxiv.org/abs/1502.03167, Its implementation here is mostly demonstrative due to the size of the MLP it wont impact the performance too much, but on big ANN they play a important role. By using a Normalization layer that also keeps track of the mean and stable distributionit maintains the values of the preactivatted layer to a Gaussian distribution, this also prevents over fitting data
 
+          MLP Initialized
+          Layers created in 0.02382140001282096 sec
+          This MLP contain 12297 parameters        
+          Value of the loss funtion: 3.2917559146881104 on training step:0
+          Value of the loss funtion: 2.179684638977051 on training step:10000
+          Value of the loss funtion: 2.0975732803344727 on training step:20000
+          Training of 20001 steps completed 27.136896900017746 sec
+          Evaluation loss: 2.236245632171631
+          daviah.
+
 
 
 
 #### New aditions:
  - Reduced initial loss due to descaling the output layer W and b
  - Eficiently reduce loss and increase training efficiency by scaling the Hidden layer with a Kaiming ratio
+ - Introduced batch normalization, it doesent improve performance too much but conceptually is essential for deep neural networks
+
+
+ ### WaveNet 
+
+ Its Like a MLP but with a Deeper NN, more layers basically, 
+
+ #### Steps of implementations:
+ 1. It starts with the previous MLP code, but getting rid of all the hard values and functions and building the layers as classes in order to have more versatility
