@@ -33,24 +33,17 @@ def build_dataset(names, block_size=3):
     return X , Y
 
 @torch.no_grad()
-def split_loss(x,y,C, layers):
+def split_loss(x,y,model):
     x,y = x,y
-    emb = C[x]
-    x = emb.view(emb.shape[0], -1)
-    for layer in layers:
-        x = layer(x)
-    loss = F.cross_entropy(x,y)
+    logits = model(x)
+    loss = F.cross_entropy(logits,y)
     return loss
 
-def generate_name(block_size=3, C=None, layers=None):
+def generate_name(block_size=3, model=None):
     out = []
     context = [0] * block_size
     while True:
-        emb = C[torch.tensor([context])]
-        x = emb.view(emb.shape[0], -1)
-        for layer in layers:
-            x = layer(x)
-        logits = x
+        logits = model(torch.tensor([context]))
         probs = F.softmax(logits, dim=1)
         
         ix = torch.multinomial(probs, num_samples=1).item()
@@ -122,13 +115,53 @@ class Tanh:
         return []
 
 
+class Embedding:
+    
+    def __init__(self, num_embeddings, embedding_dim):
+        self.weight = torch.randn((num_embeddings,embedding_dim))
+        
+    def __call__(self,IX):
+        self.out = self.weight[IX]
+        return self.out
+    
+    def parameters(self):
+        return [self.weight]
+    
+
+class Flatten:
+    
+    def __init__(self,n):
+        self.n =n
+    
+    def __call__(self, x):
+        self.out = x.view(x.shape[0], -1)
+        return self.out
+    
+    def parameters(self):
+        return []
+        
+        
+    
+class Sequential:
+    def __init__(self, layers):
+        self.layers = layers
+    
+    def __call__(self, x) -> torch.Any:
+        for layer in self.layers:
+            x = layer(x)
+        self.out = x
+        return self.out
+    
+    def parameters(self):
+        return [p for layer in self.layers for p in layer.parameters()]
+
 
 def main():
     print("Program Initialized: WaveNet")
     tic = time.perf_counter()
     
     # Building the dataset for trainingand testing
-    block_size = 3
+    block_size = 8
     random.shuffle(names)
     lim1 = int(0.8*len(names))
     lim2 = int(0.9*len(names))
@@ -142,12 +175,18 @@ def main():
     n_emb = 10      #The dimenstion of the character embeding layer
     n_hidden = 200  # The dimantion of the hidden layer
     
-    C = torch.randn((vocab_size, n_emb)) # embeding layer
-    layers = [Linear(n_emb*block_size, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(), Linear(n_hidden, vocab_size)]
+    # C = torch.randn((vocab_size, n_emb)) # embeding layer replaces by embeding module
+    model = Sequential([
+                Embedding(vocab_size, n_emb),
+                Flatten(),
+                Linear(n_emb*block_size, n_hidden, bias=False), 
+                BatchNorm1d(n_hidden), 
+                Tanh(), 
+                Linear(n_hidden, vocab_size)])
     with torch.no_grad():
-        layers[-1].weight *= 0.1 # make last layer less confident
+        model.layers[-1].weight *= 0.1 # make last layer less confident
     
-    parameters = [C] + [p for layer in layers for p in layer.parameters()]
+    parameters = model.parameters()
     for p in parameters:
         p.requires_grad = True
     
@@ -163,11 +202,8 @@ def main():
         Xbatch, Ybatch = Xtr[ix], Ytr[ix]  # Batch resulted from indexig the trainig data
         
         # Forward pass
-        emb = C[Xbatch] # Embeded characters into vecotors
-        x = emb.view(emb.shape[0], -1) # Concatenate Vectors
-        for layer in layers:
-            x = layer(x)
-        loss = F.cross_entropy(x, Ybatch)
+        logits = model(Xbatch)
+        loss = F.cross_entropy(logits, Ybatch)
         
         # Backward pass
         for p in parameters:
@@ -177,7 +213,7 @@ def main():
         # Update
         lr = 0.1
         for p in parameters:
-            p.data = -lr * p.grad
+            p.data += -lr * p.grad
             
         # Track stats
         if i % (max_steps/10) == 0:
@@ -186,15 +222,15 @@ def main():
     print(f"Gradient descent Complete in {time.perf_counter()-tic}")
     
     print(f"\n Evaluating the loss")
-    for layer in layers:
+    for layer in model.layers:
         layer.training = False
         
-    print(f"Loss on training data: {split_loss(Xtr,Ytr,C,layers)}")
-    print(f"Loss on dev data: {split_loss(Xdev,Ydev,C,layers)}")
-    print(f"Loss on test data: {split_loss(Xtest,Ytest,C,layers)}")
+    print(f"Loss on training data: {split_loss(Xtr,Ytr,model)}")
+    print(f"Loss on dev data: {split_loss(Xdev,Ydev,model)}")
+    print(f"Loss on test data: {split_loss(Xtest,Ytest,model)}")
 
     print(f"\nGenerating Names with the model")
-    generate_name(block_size, C, layers)
+    generate_name(block_size,model)
 
 if __name__ == "__main__":
     main()
