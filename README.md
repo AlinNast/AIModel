@@ -386,6 +386,12 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
  Its Like a MLP but with a Deeper NN, more layers basically, 
 
  #### Steps of implementations:
- 1. It starts with the previous MLP code, but getting rid of all the hard values and functions and building the layers as classes in order to have more versatility
+ 1. It starts with the previous MLP code, but getting rid of all the hard values and functions and building the layers as classes in order to have more versatility.
  2. Apply the same logic on the embeding layer with the same principles of pytorch, and encapsulate everything into a model object.
- 3. In order to apply the waveNet structure to this ANN the block size needs to increase, with a block size of 8 instead of a 3 training loss decreases faster, but the limit is set by introducing all the information of the embedding into a single layer of neurons
+ 3. In order to apply the waveNet structure to this ANN the block size needs to increase, with a block size of 8 instead of a 3 training loss decreases faster, but the limit is set by introducing all the information of the embedding into a single layer of neurons, here comes in hand creating more layers.
+ 4. Using the modularity of torch.nn it was easy to create the new architecture and adapt the forward pass to it.
+ 5. Applying techniques as BatchNormalization and Kaimin number to stabilize the neurons over many activations.
+
+ #### New aditions:
+ - Built structure with classes rather than functions, to help with modularity and mimic production models
+ - Changed the ANN structure to have 3 Hidden Layers

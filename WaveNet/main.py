@@ -85,8 +85,12 @@ class BatchNorm1d:
         
     def __call__(self, x):
         if self.training:
-            xmean = x.mean(0, keepdim=True) # batch mean
-            xvar = x.var(0, keepdim=True) # batch variance
+            if x.ndim == 2:
+                dim = 0
+            elif x.ndim == 3:
+                dim = (0,1)
+            xmean = x.mean(dim, keepdim=True) # batch mean
+            xvar = x.var(dim, keepdim=True) # batch variance
         else:
             xmean = self.running_mean
             xvar = self.running_var
@@ -134,7 +138,12 @@ class Flatten:
         self.n =n
     
     def __call__(self, x):
-        self.out = x.view(x.shape[0], -1)
+        B,T,C = x.shape
+        x = x.view(B,T//self.n,C*self.n)
+        if x.shape[1] == 1:
+            x = x.squeeze(1)
+        
+        self.out = x
         return self.out
     
     def parameters(self):
@@ -172,14 +181,25 @@ def main():
     
     print(f"\nStarting ANN contruction")
     
-    n_emb = 10      #The dimenstion of the character embeding layer
-    n_hidden = 200  # The dimantion of the hidden layer
+    n_emb = 27      #The dimenstion of the character embeding layer
+    n_hidden = 128  # The dimention of the hidden layer
     
     # C = torch.randn((vocab_size, n_emb)) # embeding layer replaces by embeding module
     model = Sequential([
                 Embedding(vocab_size, n_emb),
-                Flatten(),
-                Linear(n_emb*block_size, n_hidden, bias=False), 
+                
+                Flatten(2),
+                Linear(n_emb*2, n_hidden, bias=False), 
+                BatchNorm1d(n_hidden), 
+                Tanh(), 
+                
+                Flatten(2),
+                Linear(n_hidden*2, n_hidden, bias=False), 
+                BatchNorm1d(n_hidden), 
+                Tanh(), 
+                
+                Flatten(2),
+                Linear(n_hidden*2, n_hidden, bias=False), 
                 BatchNorm1d(n_hidden), 
                 Tanh(), 
                 Linear(n_hidden, vocab_size)])
@@ -193,7 +213,7 @@ def main():
     print(f"ANN Initialized with {sum(p.nelement() for p in parameters)}, in {time.perf_counter() - tic} seconds")
     
     print("\n Initializing BackPropagation")
-    max_steps = 1000
+    max_steps = 6000
     batch_size = 32
     
     for i in range(max_steps):
@@ -211,13 +231,20 @@ def main():
         loss.backward()
         
         # Update
-        lr = 0.1
+        if i<= max_steps/4:
+            lr = 0.01
+        elif max_steps/4<i<=(2*max_steps)/4:
+            lr = 0.005
+        elif (2*max_steps)/4<i<=(3*max_steps)/4:
+            lr = 0.001
+        else:
+            lr = 0.0001
         for p in parameters:
             p.data += -lr * p.grad
             
         # Track stats
         if i % (max_steps/10) == 0:
-            print(f"On trainig step {i} loss was {loss.item()}")
+            print(f"On trainig step {i} loss was {loss.item()} with a Learning rate of : {lr}")
 
     print(f"Gradient descent Complete in {time.perf_counter()-tic}")
     
@@ -230,7 +257,8 @@ def main():
     print(f"Loss on test data: {split_loss(Xtest,Ytest,model)}")
 
     print(f"\nGenerating Names with the model")
-    generate_name(block_size,model)
+    for i in range(3):
+        generate_name(block_size,model)
 
 if __name__ == "__main__":
     main()
