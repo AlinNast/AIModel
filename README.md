@@ -400,3 +400,7 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
  ### 10 GPT
 
  Here I am with the last entry of this project, as I will build My first GPT Model. I will be trained with characters rather than words due to computational limitations
+ The encoder here builds a vocabulary of 65 characters compared to 50257 tokes the gpt2 encoder uses, it suites my model becouse it will be trained on the tiny shakespere dataset
+
+#### Steps of implementations:
+1. Starting with building the encode/decoder, even though sub words tokenizers are the production desires, wi will stick to charachter level tokenizer becouse of computational limits
