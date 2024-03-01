@@ -196,7 +196,7 @@ def main():
                 Flatten(2),
                 Linear(n_hidden*2, n_hidden, bias=False), 
                 BatchNorm1d(n_hidden), 
-                Tanh(), 
+                Tanh(),
                 
                 Flatten(2),
                 Linear(n_hidden*2, n_hidden, bias=False), 

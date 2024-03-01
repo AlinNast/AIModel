@@ -307,7 +307,7 @@ On this experiment I combined the encoding from the previous model, turning the 
 - Using a block of 3 character to predict the next one rather than just one
 
 
-### MLP v2
+### 8 MLP v2
 
 It is a Upgraded MLP, with a bigger number of parameters, with more training epochs, normalized parameters to avoid inactive neurons, and batch normalization to support deeper neural networks.
 
@@ -381,7 +381,7 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
  - Introduced batch normalization, it doesent improve performance too much but conceptually is essential for deep neural networks
 
 
- ### WaveNet 
+ ### 9 WaveNet 
 
  Its Like a MLP but with a Deeper NN, more layers basically, 
 
@@ -395,3 +395,8 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
  #### New aditions:
  - Built structure with classes rather than functions, to help with modularity and mimic production models
  - Changed the ANN structure to have 3 Hidden Layers
+
+
+ ### 10 GPT
+
+ Here I am with the last entry of this project, as I will build My first GPT Model. I will be trained with characters rather than words due to computational limitations
