@@ -3,6 +3,14 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 
+batch_size = 4 # how many independent sequences will be processed in paralel (4 becouse my cpu is quad core)
+block_size = 8 # The lenght of the context for predictions
+learning_rate = 1e-3
+max_iters = 3000
+eval_interval = 300
+eval_iters = 200
+
+
 ## This opens the training data. 
 with open('.\GitHub\AIModel\\NanoGPT\\train.txt', 'r', encoding='utf-8') as f:
     text = f.read()
@@ -27,8 +35,7 @@ data_split = int(0.9*len(data))
 train_data = data[:data_split]
 val_data = data[data_split:]
 
-batch_size = 4 # how many independent sequences will be processed in paralel (4 becouse my cpu is quad core)
-block_size = 8 # The lenght of the context for predictions
+
 
 def get_batch(split):
     # Generate a small batch of data of Inputs X and target y. 
@@ -39,6 +46,21 @@ def get_batch(split):
     return x, y
 
 xb, yb = get_batch('train')
+
+
+@torch.no_grad()
+def estimate_loss():
+    out = {}
+    m.eval()
+    for split in ['train', 'val']:
+        losses = torch.zeros(eval_iters)
+        for k in range(eval_iters):
+            X, Y = get_batch(split)
+            logits, loss = m(X, Y)
+            losses[k] = loss.item()
+        out[split] = losses.mean()
+    m.train()
+    return out
 
 
 # super simple bigram model, already built by torch.nn module
@@ -64,8 +86,42 @@ class BigramLanguageModel(nn.Module):
 
         return logits, loss
     
+    def generate(self, idx, max_new_tokens):
+        # idx is (B, T) array of indices in the current context
+        for _ in range(max_new_tokens):
+            # get the predictions
+            logits, loss = self(idx)
+            # focus only on the last time step
+            logits = logits[:, -1, :] # becomes (B, C)
+            # apply softmax to get probabilities
+            probs = F.softmax(logits, dim=-1) # (B, C)
+            # sample from the distribution
+            idx_next = torch.multinomial(probs, num_samples=1) # (B, 1)
+            # append sampled index to the running sequence
+            idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
+        return idx
+    
     
 m = BigramLanguageModel(vocab_size)
-out = m(xb, yb)
-print(out.shape)
+
+optimizer = torch.optim.AdamW(m.parameters(), lr=learning_rate)
+
+for iter in range(max_iters):
+
+    # every once in a while evaluate the loss on train and val sets
+    if iter % eval_interval == 0:
+        losses = estimate_loss()
+        print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+
+    # sample a batch of data
+    xb, yb = get_batch('train')
+
+    # evaluate the loss
+    logits, loss = m(xb, yb)
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    optimizer.step()
+
+
+print(decode(m.generate(idx=torch.zeros((1, 1), dtype=torch.long), max_new_tokens=100)[0].tolist()))
 

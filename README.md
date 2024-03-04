@@ -404,3 +404,5 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
 
 #### Steps of implementations:
 1. Starting with building the encode/decoder, even though sub words tokenizers are the production desires, wi will stick to charachter level tokenizer becouse of computational limits
+2. To make the fundation fot the model I created  Bigram with the torch.nn module, with the usual Cross_entropy to calculate loss, but with a generation function capable of taking into account all the previous generated text.
+3. The training, instead of a stochastic gradient descent this time I used AdamW, which is a built in optimizer from pytorch
