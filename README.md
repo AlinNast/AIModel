@@ -401,8 +401,26 @@ It is a Upgraded MLP, with a bigger number of parameters, with more training epo
 
  Here I am with the last entry of this project, as I will build My first GPT Model. I will be trained with characters rather than words due to computational limitations
  The encoder here builds a vocabulary of 65 characters compared to 50257 tokes the gpt2 encoder uses, it suites my model becouse it will be trained on the tiny shakespere dataset
+ To build it I learned in this lesson about single attention head, which is the key in in self attention, By implementing linear network for the key and query of a specific element, that is separated from the ANN involved in learning and separete from eachother, it stores information related to the element and its affinities, and by mutmul the outputs of these linear networks we get the highlights of the relationship with the previous elements
 
 #### Steps of implementations:
 1. Starting with building the encode/decoder, even though sub words tokenizers are the production desires, wi will stick to charachter level tokenizer becouse of computational limits
 2. To make the fundation fot the model I created  Bigram with the torch.nn module, with the usual Cross_entropy to calculate loss, but with a generation function capable of taking into account all the previous generated text.
 3. The training, instead of a stochastic gradient descent this time I used AdamW, which is a built in optimizer from pytorch
+4. Adding a attention head to give context tie the connexions between tokens. Applying a Masked filter to restrict the tokens to comunicate only with token from before
+5. Creating a MultiHead attentions class, it feeds into a linear layer all the outputs from the attention heads and concatenates the results into a single tensor
+6. The feed forward component is now implementing, spliting the input into a relu layer 4 times bigger than the input tensor and the linearly putting it all togather
+7. The Block is made to contain the MultiHead Attention module, the FeedForward and its here where the Additon of residual data is handled and normalized by layer norm function, this is one of the main component of the Attention is all you need paper as it puts togather the attention heads, add&norm of the residual data, and the feed forward
+8. nn.Dropout is implemented in the attention heads and feed forward components as a regulation method proved to prevent overfitting
+
+#### New aditions:
+ -  Attention Head
+ -  MultiHead attention
+ - The feed forward component from the Attention is all you need
+ - The add & norm from attention is all you need
+ - the dropout as a regulation method to prevent over fitting
+
+
+ ## Conclusion:
+ This is a decoder only transformer, it is the basics of a GPT model, it can complete documents as this is one of the most basic task, in this case it will generate shakespeare
+ 
