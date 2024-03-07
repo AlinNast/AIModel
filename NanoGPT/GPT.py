@@ -6,18 +6,17 @@ from torch.nn import functional as F
 # hyperparameters
 batch_size = 4 # how many independent sequences will we process in parallel?
 block_size = 256 # what is the maximum context length for predictions?
-max_iters = 5
-eval_interval = 1
-learning_rate = 3e-4
+max_iters = 5 # The number of iterations the model will be trained for
+eval_interval = 1 # How often the model will be evaluated
+learning_rate = 3e-4 # Learning rate
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-eval_iters = 200
-n_embd = 384
-n_head = 6
-n_layer = 6
-dropout = 0.2
+eval_iters = 200 # How often the model will be evaluated
+n_embd = 384 # the dimensionality of the embeddings
+n_head = 6 # the number of heads in the multi-head attention block
+n_layer = 6 # the number of layers in the transformer
+dropout = 0.2 # the dropout rate
 # ------------
 
-torch.manual_seed(1337)
 
 # wget https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
 with open('.\GitHub\AIModel\\NanoGPT\\train.txt', 'r', encoding='utf-8') as f:
@@ -33,7 +32,7 @@ encode = lambda s: [stoi[c] for c in s] # encoder: take a string, output a list 
 decode = lambda l: ''.join([itos[i] for i in l]) # decoder: take a list of integers, output a string
 
 # Train and test splits
-data = torch.tensor(encode(text), dtype=torch.long)
+data = torch.tensor(encode(text), dtype=torch.long) # encode the text
 n = int(0.9*len(data)) # first 90% will be train, rest val
 train_data = data[:n]
 val_data = data[n:]
@@ -67,10 +66,10 @@ class Head(nn.Module):
 
     def __init__(self, head_size):
         super().__init__()
-        self.key = nn.Linear(n_embd, head_size, bias=False)
+        self.key = nn.Linear(n_embd, head_size, bias=False) 
         self.query = nn.Linear(n_embd, head_size, bias=False)
-        self.value = nn.Linear(n_embd, head_size, bias=False)
-        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+        self.value = nn.Linear(n_embd, head_size, bias=False) #
+        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size))) # This is the mask layer from the attention is all you need, it makes the difference between the encoder (doesent have the mask) and the decoder
 
         self.dropout = nn.Dropout(dropout)
 
